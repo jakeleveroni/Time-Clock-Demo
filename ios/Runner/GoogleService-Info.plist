@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>263409862022-ka5e4q09h11puc5ed3ui469qrrm33o9d.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.263409862022-ka5e4q09h11puc5ed3ui469qrrm33o9d</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBD78o1-ZjLoiM7qrfYHeatdGy7BoB38cY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>263409862022</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.lfmxTimeClock</string>
+	<key>PROJECT_ID</key>
+	<string>lfmx-time-clock-demo</string>
+	<key>STORAGE_BUCKET</key>
+	<string>lfmx-time-clock-demo.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:263409862022:ios:d4fcf723eee4325b</string>
+	<key>DATABASE_URL</key>
+	<string>https://lfmx-time-clock-demo.firebaseio.com</string>
+</dict>
+</plist>
