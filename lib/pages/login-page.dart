@@ -1,17 +1,30 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+
 import 'home-page/home-page.dart';
+import '../components/snackbar-builder-service.dart';
+import '../services/authentication-service.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.title}) : super(key: key);
-
   final String title;
+  AuthenticationService _auth;
+
+  LoginPage({Key key, this.title = 'LFMX Login'}) : super(key: key) {
+    _auth = new AuthenticationService();
+  }
 
   @override
-  _LoginPage createState() => new _LoginPage();
+  _LoginPage createState() => new _LoginPage(this._auth);
 }
 
 class _LoginPage extends State<LoginPage> {
+  _LoginPage(this._auth) {
+  }
+
   final _formKey = GlobalKey<FormState>();
+  AuthenticationService _auth;
+  String inputEmail;
+  String inputPass;
 
   @override
   Widget build(BuildContext context) {
@@ -25,69 +38,86 @@ class _LoginPage extends State<LoginPage> {
         ),
       ),
       body: new Center(
-        child: new Form(
-          key: _formKey,
-          child: new Column(        
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new Text(
-                'Enter Credentials',
-              ),
-              new TextFormField(
-                validator: (val) {
-                  String emailRegex = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                  RegExp regExpr = new RegExp(emailRegex);
+        child: new Container(
+          padding: const EdgeInsets.symmetric(horizontal: 60.0),
+          child:  new Form(
+            key: _formKey,
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                new Text(
+                  'Login To Proceed',
+                  style: TextStyle(
+                    fontSize: 24.0
+                  ),
+                ),
+                new TextFormField(
+                  keyboardType: TextInputType.emailAddress,
+                  keyboardAppearance: Brightness.dark,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                  ),
+                  validator: (val) {
+                    this.inputEmail = val;
+                    String emailRegex = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                    RegExp regExpr = new RegExp(emailRegex);
 
-                  if (val.isEmpty) {
-                    return 'Email input cannot be empty';
-                  }
+                    if (val.isEmpty) {
+                      return 'Email input cannot be empty';
+                    }
 
-                  if (!regExpr.hasMatch(val)) {
-                    return 'Invalid email format provided.';
-                  }
+                    if (!regExpr.hasMatch(val)) {
+                      return 'Invalid email format provided.';
+                    }
 
-                },
-              ),
-              new TextFormField(
-                validator: (val) {
-                  if (val.isEmpty) {
-                    return 'Password must be specified.';
-                  }
+                  },
+                ),
+                new TextFormField(
+                  keyboardType: TextInputType.text,
+                  keyboardAppearance: Brightness.dark,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                  ),
+                  validator: (val) {
+                    this.inputPass = val;
+                    if (val.isEmpty) {
+                      return 'Password must be specified.';
+                    }
 
-                  if (val.length < 6) {
-                    return 'Password must be at least 6 characters in length.';
-                  }
-                },
-              ),
-
-              new RaisedButton(
-                onPressed: () {
-                  // Validate will return true if the form is valid, or false if
-                  // the form is invalid.
-                  if (_formKey.currentState.validate()) {
-                    // If the form is valid, we want to show a Snackbar
-                    // Scaffold.of(context)
-                        // .showSnackBar(SnackBar(content: Text('Processing Data')));
-                  }
-                },
-                child: Text('Submit'),
-              ),
-            ],
-          ),
-        )
+                    if (val.length < 6) {
+                      return 'Password must be at least 6 characters in length.';
+                    }
+                  },
+                ),
+              ],
+            ),
+          )
+        ),
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: () {
-          Navigator.pushReplacement(
-            context,     
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
+        onPressed: () async {
+          if (_formKey.currentState.validate()) {
+            await this._login();
+            Navigator.pushReplacement(
+              context,     
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+            return;
+          }
         },
         foregroundColor: Colors.grey[850],
-        tooltip: 'Start New Timer',
+        tooltip: 'Login',
         child: new Icon(Icons.navigate_next),
       ), 
     );
+  }
+
+  Future<bool> _login() async {
+    this._formKey.currentState;
+    var result = await this._auth.login(this.inputEmail, this.inputPass);
+    print(result);
+
+    return result != null;
   }
 }
 

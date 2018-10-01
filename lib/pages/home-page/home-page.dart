@@ -1,29 +1,35 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
+import '../login-page.dart';
+import '../../services/authentication-service.dart';
+
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
+  AuthenticationService _auth;
   final String title;
 
+  HomePage({Key key, this.title}) : super(key: key) {
+    this._auth = new AuthenticationService();
+  }
+
+
   @override
-  _HomePage createState() => new _HomePage();
+  _HomePage createState() => new _HomePage(_auth);
 }
 
 class _HomePage extends State<HomePage> {
+  AuthenticationService _auth;
   Choice _selectedChoice = popoutMenuOpts[0];
 
-  void _select(Choice c) {
-    setState(() {
+  _HomePage(this._auth);
+
+  Future<void> _select(Choice c) async{
+    setState(() async {
       _selectedChoice = c;
+      if (c.title == 'Logout') {
+        await this._auth.logout();
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+      }
       // Navigator.push(context, route)
     });
   }

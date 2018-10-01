@@ -1,4 +1,4 @@
-import '../../services/timer.dart';
+import '../../models/timer.dart';
 
 class HomePageState {
   bool timerActive;

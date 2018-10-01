@@ -43,4 +43,8 @@ class AuthenticationService {
       return new UserDto(this._user.displayName, this._user.email, this._user.uid); 
     }
   }
+
+  Future<void> logout() async {
+    return await this._auth.signOut();
+  }
 }

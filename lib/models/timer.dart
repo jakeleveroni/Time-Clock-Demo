@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Timer {
   Timer(bool start) {
     if (start) {
@@ -8,6 +10,10 @@ class Timer {
     }
   }
 
+  // TODO get the first three properties involved in this
+  String uid;
+  String title;
+  String description;
   DateTime startTime;
   DateTime pauseStartTime;
   DateTime pauseStopTime;
