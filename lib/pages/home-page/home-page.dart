@@ -30,7 +30,6 @@ class _HomePage extends State<HomePage> {
         await this._auth.logout();
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
       }
-      // Navigator.push(context, route)
     });
   }
 

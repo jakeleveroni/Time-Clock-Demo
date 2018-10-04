@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'firebase-database.dart';
 import '../models/dtos/user-dto.dart';
 
 class AuthenticationService {
   static final AuthenticationService _singleton = new AuthenticationService._internal();
   FirebaseAuth _auth;
+  FirebaseDatabaseService _db;
   FirebaseUser _user;
   UserDto currentUser;
 
@@ -15,6 +17,7 @@ class AuthenticationService {
 
   AuthenticationService._internal() {
     _auth = FirebaseAuth.instance;
+    _db = FirebaseDatabaseService();
   }
 
   bool isLoggedIn() {
@@ -32,15 +35,14 @@ class AuthenticationService {
     }
   }
 
-  Future<UserDto> createAccount(String email, String pass) async {
-    var user = this._auth.createUserWithEmailAndPassword(email: email, password: pass);
-
+  Future<bool> createAccount(String email, String pass) async {
+    var user = await this._auth.createUserWithEmailAndPassword(email: email, password: pass);
     if (user == null) {
       print('Error could not create user');
-      return null;
-    } else {
-      // TODO add user to database
-      return new UserDto(this._user.displayName, this._user.email, this._user.uid); 
+      return false;
+    } else {  
+      await this._db.createUser(new UserDto(user.displayName, user.email, user.uid));
+      return true;
     }
   }
 

@@ -17,7 +17,12 @@ class FirebaseInitializer {
               databaseURL: 'https://lfmx-time-clock-demo.firebaseio.com',
               apiKey: 'AIzaSyCzQ9-c9QBBYKOJ8IhQZV6WnuXO6nzEa18'
             )
-          : null,
+            // TODO change the keys here for android
+          : const FirebaseOptions(
+              googleAppID: '1:263409862022:ios:d4fcf723eee4325b',
+              databaseURL: 'https://lfmx-time-clock-demo.firebaseio.com',
+              apiKey: 'AIzaSyCzQ9-c9QBBYKOJ8IhQZV6WnuXO6nzEa18'
+          ),
       );
     }
   }

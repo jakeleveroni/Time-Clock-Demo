@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'home-page/home-page.dart';
-import '../components/snackbar-builder-service.dart';
+import '../components/overlay-component.dart';
 import '../services/authentication-service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,17 +18,16 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPage extends State<LoginPage> {
-  _LoginPage(this._auth) {
-  }
+  _LoginPage(this._auth);
 
   final _formKey = GlobalKey<FormState>();
   AuthenticationService _auth;
   String inputEmail;
   String inputPass;
+  bool _isProcessing = false;
 
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
+  List<Widget> _build(BuildContext context) {
+    var scaffold = new Scaffold(
       appBar: new AppBar(
         title: new Text(
           widget.title, 
@@ -89,35 +88,89 @@ class _LoginPage extends State<LoginPage> {
                     }
                   },
                 ),
+                new Row(
+                  children: [
+                    RaisedButton(
+                      onPressed: _createAccount,
+                      colorBrightness: Brightness.dark,
+                      color: Colors.pinkAccent,
+                      child: new Text('Create Account'),
+                    ),
+
+                    // Used to space the buttons
+                    new Container(
+                      width: 8.0
+                    ),
+
+                    RaisedButton(
+                      onPressed: _login,
+                      colorBrightness: Brightness.dark,
+                      color: Colors.pinkAccent,
+                      child: new Text('Login')
+                    )
+                  ]
+                )
               ],
             ),
           )
         ),
       ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: () async {
-          if (_formKey.currentState.validate()) {
-            await this._login();
-            Navigator.pushReplacement(
-              context,     
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-            return;
-          }
-        },
-        foregroundColor: Colors.grey[850],
-        tooltip: 'Login',
-        child: new Icon(Icons.navigate_next),
-      ), 
+    );
+
+    var loadingListWidgets= new List<Widget>();
+    loadingListWidgets.add(scaffold);
+
+    if (_isProcessing) {
+      loadingListWidgets.add(OverlayBuilder.buildLoadingOverlay());
+    }
+
+    return loadingListWidgets;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new Stack(
+        children: _build(context)
+      )
     );
   }
 
   Future<bool> _login() async {
-    this._formKey.currentState;
-    var result = await this._auth.login(this.inputEmail, this.inputPass);
-    print(result);
+    setState(() {
+      _isProcessing = true;
+    });
 
-    return result != null;
+    if (this._formKey.currentState.validate()) {
+      var result = await this._auth.login(this.inputEmail, this.inputPass);
+      setState(() {
+        _isProcessing = false;              
+      });
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+      return result != null;
+    } else {
+      setState(() {
+        _isProcessing = false;
+      });
+      return false;
+    }
+  }
+
+  Future<void> _createAccount() async {
+    setState(() {
+      _isProcessing = true;
+    });
+    if (this._formKey.currentState.validate()) {
+      await this._auth.createAccount(this.inputEmail, this.inputPass);
+      setState(() {
+        _isProcessing = false;
+      });
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+    } else {
+      setState(() {
+        _isProcessing = false;
+      });
+    }
   }
 }
 
