@@ -75,6 +75,35 @@ class Timer {
     
     return totalDuration - (pauseDuration ?? 0);
   }
+
+  String _stateToString(TimerState t) {
+    switch(t) {
+      case TimerState.NEVER_STARTED:
+        return 'NEVER_STARTED';
+      case TimerState.STARTED:
+        return 'STARTED';
+      case TimerState.PAUSED:
+        return 'PAUSED';
+      case TimerState.STOPPED:
+        return 'STOPPED';
+      default:
+        return 'NEVER_STARTED';
+    }
+  }
+
+  Map<String, dynamic> toDocument() {
+
+    return {
+      'uid': uid,
+      'title': title,
+      'description': description,
+      'startTime': startTime,
+      'pauseStartTime': pauseStartTime,
+      'pauseStopTime': pauseStopTime,
+      'endTime': endTime,
+      'currentState': _stateToString(currentState)
+    };
+  }
 }
 
 enum TimerState {

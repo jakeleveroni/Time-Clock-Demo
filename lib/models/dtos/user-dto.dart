@@ -2,6 +2,10 @@ class UserDto {
   String userName;
   String email;
   String uid;
+  String phoneNumber;
+  String profileImageUrl;
+  List<String> messageThreadRefs;
+  List<String> timerRefs;
 
   UserDto(this.userName, this.email, this.uid);
 
@@ -9,7 +13,9 @@ class UserDto {
     return {
       'userName': userName,
       'email': email,
-      'uid': uid
+      'uid': uid,
+      'messageThreadRefs': messageThreadRefs,
+      'timerRefs': timerRefs
     };
   }
 }
