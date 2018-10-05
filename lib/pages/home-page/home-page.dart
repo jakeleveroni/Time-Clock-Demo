@@ -26,7 +26,7 @@ class _HomePage extends State<HomePage> {
   Future<void> _select(Choice c) async{
     setState(() async {
       _selectedChoice = c;
-      if (c.title == 'Logout') {
+      if (_selectedChoice.title == 'Logout') {
         await this._auth.logout();
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
       }
@@ -92,6 +92,7 @@ class Choice {
 }
 
 const List<Choice> popoutMenuOpts = const <Choice>[
+  const Choice(title: 'My Profile', icon: Icons.person),
   const Choice(title: 'Messaging', icon: Icons.message),
   const Choice(title: 'Logout', icon: Icons.power_settings_new),
 ];
