@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../login-page.dart';
 import '../../models/timer.dart';
 import './home-page-state.dart';
+import '../../components/timer-list-item-component.dart';
 import '../../services/authentication-service.dart';
 import '../../services/firebase-database.dart';
 
@@ -35,7 +36,9 @@ class _HomePage extends State<HomePage> {
     this._state.timerStream = this._db.getUsersTimers(this._auth.currentUser.uid);
     this._state.timerStream.listen((data) {
       this._state.timers = data.documents.map((x) => TimeTracker.fromDocument(x)).toList();
+      setState(() {});
     });
+
   }
 
   Future<void> _select(Choice c) async{
@@ -48,7 +51,15 @@ class _HomePage extends State<HomePage> {
     });
   }
 
-  void _toggleTimer(TimeTracker t) {
+  void _toggleTimer(TimeTracker t, String action) {
+    switch(action) {
+      case 'pause':
+        break;
+      case 'unpause':
+        break;
+      default: 
+        print('Invalid action specified for timer interaction');
+    }
     // TODO
   }
 
@@ -93,15 +104,50 @@ class _HomePage extends State<HomePage> {
             })
         ],
       ),
-      body: new Center(
-        child: new Column(
+      body: new Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            new Text(
-              'Welcome Back',
+          new Expanded(
+              child: new ListView.builder(
+                itemBuilder: (context, index) { 
+                  var timer = this._state.timers[index];
+                  return Dismissible(
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 25.0
+                      ),
+                      decoration: new BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: new BorderRadius.all(
+                          const Radius.circular(10.0)
+                        )
+                      ),
+                      child: Align(
+                        child: Text('Delete Timer')
+                      ),
+                    ),
+                    key: Key(timer.uid),
+                    onDismissed: (direction) {
+                      // remove from firebase
+                      setState(() {
+                        this._state.timers.removeAt(index);
+                      });
+
+                      Scaffold.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Timer ${timer.title} Removed')
+                        )
+                      );
+                    },
+                    child: TimerListItemComponent(timer),
+                  );
+                },
+                itemCount: this._state.timers.length,
+                padding: new EdgeInsets.symmetric(vertical: 45.0)
+              ),
             ),
           ],
-        ),
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: _startNewTimer,
