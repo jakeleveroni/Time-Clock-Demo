@@ -6,7 +6,7 @@ class HomePageDataTableSource extends DataTableSource {
   List<TimerDataRow> timers;
   int _selectedCount;
 
-  HomePageDataTableSource(List<Timer> timers) {
+  HomePageDataTableSource(List<TimeTracker> timers) {
     // TODO get timers from db
     this.timers = new List<TimerDataRow>();
     for (var t in timers) {
@@ -56,7 +56,7 @@ class HomePageDataTableSource extends DataTableSource {
 }
 
 class TimerDataRow {
-  Timer timer;
+  TimeTracker timer;
   bool selected;
 
   TimerDataRow(this.timer) {

@@ -28,6 +28,7 @@ class _LoginPage extends State<LoginPage> {
 
   List<Widget> _build(BuildContext context) {
     var scaffold = new Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: new AppBar(
         title: new Text(
           widget.title, 

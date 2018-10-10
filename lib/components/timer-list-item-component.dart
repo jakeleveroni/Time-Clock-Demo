@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/timer.dart';
 
 class TimerListItemComponent extends StatefulWidget {
-  final Timer _timer;
+  final TimeTracker _timer;
 
   TimerListItemComponent(this._timer);
   TimerListItemComponentState createState() => TimerListItemComponentState();
@@ -46,15 +46,15 @@ class TimerListItemComponentState extends State<TimerListItemComponent> {
     );
   }
 
-  void _pauseTimer(Timer t) {
+  void _pauseTimer(TimeTracker t) {
     print(t.toDocument());
   }
 
-  void _resumeTimer(Timer t) {
+  void _resumeTimer(TimeTracker t) {
     print('resume timer ${t.toDocument()}');
   }
 
-  void _stopTimer(Timer t) {
+  void _stopTimer(TimeTracker t) {
     print('stop timer ${t.toDocument()}');
   }
 }

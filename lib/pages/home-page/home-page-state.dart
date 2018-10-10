@@ -2,21 +2,25 @@ import '../../models/timer.dart';
 
 class HomePageState {
   bool timerActive;
-  List<Timer> timers;
+  List<TimeTracker> timers;
 
-  void addTimer({bool startOnCreate = true}) {
-    this.timers.add(new Timer(true));
+  HomePageState() {
+    this.timers = new List<TimeTracker>();
   }
 
-  List<Timer> getActiveTimers() {
-    return this.timers.where((Timer t) => t.currentState == TimerState.STARTED);
+  void addTimer(TimeTracker t) {
+    this.timers.add(t);
   }
 
-  List<Timer> getPausedTimers() {
-    return this.timers.where((Timer t) => t.currentState == TimerState.PAUSED);
+  List<TimeTracker> getActiveTimers() {
+    return this.timers.where((TimeTracker t) => t.currentState == TimerState.STARTED);
   }
 
-  List<Timer> getStoppedTimers() {
-    return this.timers.where((Timer t) => t.currentState == TimerState.STOPPED);
+  List<TimeTracker> getPausedTimers() {
+    return this.timers.where((TimeTracker t) => t.currentState == TimerState.PAUSED);
+  }
+
+  List<TimeTracker> getStoppedTimers() {
+    return this.timers.where((TimeTracker t) => t.currentState == TimerState.STOPPED);
   }
 }

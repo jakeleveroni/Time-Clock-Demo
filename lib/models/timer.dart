@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
 
-class Timer {
-  Timer(bool start) {
+class TimeTracker {
+  String uid;
+  String title;
+  String description;
+  String owner;
+  DateTime startTime;
+  DateTime pauseStartTime;
+  DateTime pauseStopTime;
+  DateTime endTime;
+  TimerState currentState;
+  List<TimerLog> timerLogs;
+
+  TimeTracker(bool start, String owner) {
+    // init objects
+    this.timerLogs = new List<TimerLog>();
+
     if (start) {
       startTime = DateTime.now();
       currentState = TimerState.STARTED;
@@ -10,44 +24,35 @@ class Timer {
     }
   }
 
-  // TODO get the first three properties involved in this
-  String uid;
-  String title;
-  String description;
-  DateTime startTime;
-  DateTime pauseStartTime;
-  DateTime pauseStopTime;
-  DateTime endTime;
-  TimerState currentState;
-
-  void start() {
+  void start({String description = ''}) {
       if (this.currentState == TimerState.NEVER_STARTED) {
         this.startTime = DateTime.now();
         this.currentState = TimerState.STARTED;
+        this.timerLogs.add(TimerLog(DateTime.now(), description, TimerState.STARTED));
       }  
   }
 
-  void stop() {
-    if (this.currentState == TimerState.STARTED) {
+  void stop({String description = ''}) {
+    if (this.currentState == TimerState.STARTED || this.currentState == TimerState.PAUSED) {
       this.endTime = DateTime.now(); 
       this.currentState = TimerState.STOPPED;
-    } else if (this.currentState == TimerState.PAUSED) {
-      this.endTime = DateTime.now();
-      this.currentState = TimerState.STOPPED;
+      this.timerLogs.add(TimerLog(DateTime.now(), description, TimerState.STOPPED));
     }
   }
 
-  void pause() {
+  void pause({String description = ''}) {
     if (this.currentState == TimerState.STARTED) {
       this.pauseStartTime = DateTime.now();
       this.currentState = TimerState.PAUSED;
+      this.timerLogs.add(TimerLog(DateTime.now(), description, TimerState.PAUSED));
     }
   }
 
-  void unpause() {
+  void unpause({String description = ''}) {
     if (this.currentState == TimerState.PAUSED) {
       this.pauseStopTime = DateTime.now();
       this.currentState = TimerState.STARTED;
+      this.timerLogs.add(TimerLog(DateTime.now(), description, TimerState.STARTED));
     }
   }
 
@@ -92,7 +97,6 @@ class Timer {
   }
 
   Map<String, dynamic> toDocument() {
-
     return {
       'uid': uid,
       'title': title,
@@ -104,6 +108,14 @@ class Timer {
       'currentState': _stateToString(currentState)
     };
   }
+}
+
+class TimerLog {
+  DateTime timestamp;
+  TimerState state;
+  String description;
+
+  TimerLog(this.timestamp, this.description, this.state);
 }
 
 enum TimerState {

@@ -2,7 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../login-page.dart';
+import '../../models/timer.dart';
+import './home-page-state.dart';
 import '../../services/authentication-service.dart';
+import '../../services/firebase-database.dart';
 
 class HomePage extends StatefulWidget {
   AuthenticationService _auth;
@@ -19,9 +22,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePage extends State<HomePage> {
   AuthenticationService _auth;
+  FirebaseDatabaseService _db;
   Choice _selectedChoice = popoutMenuOpts[0];
+  HomePageState _state;
 
-  _HomePage(this._auth);
+  _HomePage(this._auth) {
+    this._state = new HomePageState();
+    this._db = new FirebaseDatabaseService();
+  }
 
   Future<void> _select(Choice c) async{
     setState(() async {
@@ -33,7 +41,18 @@ class _HomePage extends State<HomePage> {
     });
   }
 
-  void _toggleTimer() {
+  void _toggleTimer(TimeTracker t) {
+
+  }
+
+  void _startNewTimer() async {
+    var user = this._auth.currentUser;
+
+    if (user != null) {
+      var t = TimeTracker(true, user.uid);
+      this._state.addTimer(t);
+      this._db.createTimer(t);
+    }
 
   }
 
@@ -75,7 +94,7 @@ class _HomePage extends State<HomePage> {
         ),
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: _toggleTimer,
+        onPressed: _startNewTimer,
         foregroundColor: Colors.grey[850],
         tooltip: 'Start New Timer',
         child: new Icon(Icons.alarm_add),
