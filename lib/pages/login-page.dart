@@ -73,6 +73,7 @@ class _LoginPage extends State<LoginPage> {
                   },
                 ),
                 new TextFormField(
+                  obscureText: true,
                   keyboardType: TextInputType.text,
                   keyboardAppearance: Brightness.dark,
                   decoration: InputDecoration(

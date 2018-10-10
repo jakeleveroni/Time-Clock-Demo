@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../models/timer.dart';
 
 class HomePageState {
   bool timerActive;
+  Stream<QuerySnapshot> timerStream;
   List<TimeTracker> timers;
 
   HomePageState() {

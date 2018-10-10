@@ -1,7 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 class Message {
-  Uuid uid;
+  String uid;
   String senderId;
   String receiverId;
   DateTime sentTime;
@@ -9,13 +9,13 @@ class Message {
   String contents;
 
   Message(this.senderId, this.receiverId, this.contents) {
-    uid = new Uuid();
+    uid = Uuid().v4();
     sentTime = new DateTime.now();
   }
 
   Map<String, dynamic> toDocument() {
     return {
-      'uid': uid.toString(),
+      'uid': uid,
       'senderId': senderId,
       'receieverId': receiverId,
       'sentTime': sentTime,

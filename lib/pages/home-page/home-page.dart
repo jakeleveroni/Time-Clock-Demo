@@ -29,6 +29,13 @@ class _HomePage extends State<HomePage> {
   _HomePage(this._auth) {
     this._state = new HomePageState();
     this._db = new FirebaseDatabaseService();
+    this._auth = new AuthenticationService();
+
+    // Initialize the views state with database information
+    this._state.timerStream = this._db.getUsersTimers(this._auth.currentUser.uid);
+    this._state.timerStream.listen((data) {
+      this._state.timers = data.documents.map((x) => TimeTracker.fromDocument(x)).toList();
+    });
   }
 
   Future<void> _select(Choice c) async{
@@ -42,18 +49,21 @@ class _HomePage extends State<HomePage> {
   }
 
   void _toggleTimer(TimeTracker t) {
-
+    // TODO
   }
 
-  void _startNewTimer() async {
+  void _debug() {
+    print('States timers: ${this._state.timers.length}');
+  }
+
+  Future<void> _startNewTimer() async {
     var user = this._auth.currentUser;
 
     if (user != null) {
       var t = TimeTracker(true, user.uid);
       this._state.addTimer(t);
-      this._db.createTimer(t);
+      await this._db.createTimer(t);
     }
-
   }
 
   @override

@@ -16,20 +16,21 @@ class FirebaseDatabaseService {
     this._db = Firestore.instance;
   }
 
-  Future<void> createUser(UserDto user) async {
-    this._db.runTransaction((Transaction trans) async {
+  Future<dynamic> createUser(UserDto user) async {
+    return await this._db.runTransaction((Transaction trans) async {
       CollectionReference ref = this._db.collection('users');
       await ref.add(user.toDocument());
     });
   }
 
-  Future<void> createTimer(TimeTracker t) {
-    this._db.runTransaction((Transaction trans) async {
-      CollectionReference ref = this._db.collection('timers').where('uid', isEqualTo: t.owner);
-      if (ref != null) {
-        CollectionReference timerRef = this._db.collection('timers');
-        await timerRef.add(t.toDocument());
-      } 
+  Future<dynamic> createTimer(TimeTracker t) async {
+    return await this._db.runTransaction((Transaction trans) async {
+      CollectionReference timersRef = this._db.collection('timers');
+      await timersRef.add(t.toDocument());
     });
+  }
+
+  Stream<QuerySnapshot> getUsersTimers(String uid) {
+    return this._db.collection('timers').where('owner', isEqualTo: uid).snapshots();
   }
 }
