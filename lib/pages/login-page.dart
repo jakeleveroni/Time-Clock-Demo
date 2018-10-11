@@ -109,6 +109,17 @@ class _LoginPage extends State<LoginPage> {
                       colorBrightness: Brightness.dark,
                       color: Colors.pinkAccent,
                       child: new Text('Login')
+                    ),
+                                        // Used to space the buttons
+                    new Container(
+                      width: 8.0
+                    ),
+
+                    RaisedButton(
+                      onPressed: _debugBypass,
+                      colorBrightness: Brightness.dark,
+                      color: Colors.pinkAccent,
+                      child: new Text('Debug Bypass')
                     )
                   ]
                 )
@@ -173,6 +184,19 @@ class _LoginPage extends State<LoginPage> {
         _isProcessing = false;
       });
     }
+  }
+
+  Future<void> _debugBypass() async {
+    setState(() {
+      _isProcessing = true;
+    });
+
+    var result = await this._auth.login('jake@jake.com', 'tester');
+    setState(() {
+      _isProcessing = false;              
+    });
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+    return result != null;
   }
 }
 

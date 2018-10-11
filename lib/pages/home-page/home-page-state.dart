@@ -16,6 +16,10 @@ class HomePageState {
     this.timers.add(t);
   }
 
+  TimeTracker removeTimer(int timerIndex) {
+    return this.timers.removeAt(timerIndex);
+  }
+
   List<TimeTracker> getActiveTimers() {
     return this.timers.where((TimeTracker t) => t.currentState == TimerState.STARTED);
   }

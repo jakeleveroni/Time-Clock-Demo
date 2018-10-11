@@ -7,8 +7,6 @@ class TimeTracker {
   String description;
   String owner;
   DateTime startTime;
-  DateTime pauseStartTime;
-  DateTime pauseStopTime;
   DateTime endTime;
   TimerState currentState;
   List<TimerLog> timerLogs;
@@ -31,8 +29,6 @@ class TimeTracker {
     this.description = snapshot['description'];
     this.owner = snapshot['owner'];
     this.startTime = snapshot['startTime'];
-    this.pauseStartTime = snapshot['pauseStartTime'];
-    this.pauseStopTime = snapshot['pauseStopTime'];
     this.endTime = snapshot['endTime'];
     this.currentState = TimerUtils.stringToState(snapshot['currentState']);
     
@@ -62,7 +58,6 @@ class TimeTracker {
 
   void pause({String description = ''}) {
     if (this.currentState == TimerState.STARTED) {
-      this.pauseStartTime = DateTime.now();
       this.currentState = TimerState.PAUSED;
       this.timerLogs.add(TimerLog(DateTime.now(), description, TimerState.PAUSED));
     }
@@ -70,7 +65,6 @@ class TimeTracker {
 
   void unpause({String description = ''}) {
     if (this.currentState == TimerState.PAUSED) {
-      this.pauseStopTime = DateTime.now();
       this.currentState = TimerState.STARTED;
       this.timerLogs.add(TimerLog(DateTime.now(), description, TimerState.STARTED));
     }
@@ -86,8 +80,6 @@ class TimeTracker {
       'title': title,
       'description': description,
       'startTime': startTime,
-      'pauseStartTime': pauseStartTime,
-      'pauseStopTime': pauseStopTime,
       'endTime': endTime,
       'currentState': TimerUtils.stateToString(currentState),
       'owner': owner,
@@ -128,6 +120,7 @@ enum TimerState {
   NEVER_STARTED,
   STARTED,
   PAUSED,
+  UNPAUSED,
   STOPPED
 }
 
@@ -140,6 +133,8 @@ class TimerUtils {
         return 'STARTED';
       case TimerState.PAUSED:
         return 'PAUSED';
+      case TimerState.UNPAUSED:
+        return 'UNPAUSED';
       case TimerState.STOPPED:
         return 'STOPPED';
       default:
@@ -155,6 +150,8 @@ class TimerUtils {
         return TimerState.STARTED;
       case 'PAUSED':
         return TimerState.PAUSED;
+      case 'UNPAUSED':
+        return TimerState.UNPAUSED;
       case 'STOPPED':
         return TimerState.STOPPED;
       default:

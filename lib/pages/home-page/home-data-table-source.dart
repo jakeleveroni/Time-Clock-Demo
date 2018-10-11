@@ -37,7 +37,6 @@ class HomePageDataTableSource extends DataTableSource {
         DataCell(Text('${timerData.timer.title}')),
         DataCell(Text('${timerData.timer.description}')),
         DataCell(Text('${timerData.timer.startTime}')),
-        DataCell(Text('${timerData.timer.pauseStartTime}')),
         DataCell(Text('${timerData.timer.endTime}')),
         DataCell(Text('${timerData.timer.getTotalActiveTime()}')),
       ]

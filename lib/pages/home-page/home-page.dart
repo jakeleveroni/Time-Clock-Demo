@@ -42,29 +42,13 @@ class _HomePage extends State<HomePage> {
   }
 
   Future<void> _select(Choice c) async{
-    setState(() async {
       _selectedChoice = c;
       if (_selectedChoice.title == 'Logout') {
         await this._auth.logout();
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
       }
-    });
-  }
 
-  void _toggleTimer(TimeTracker t, String action) {
-    switch(action) {
-      case 'pause':
-        break;
-      case 'unpause':
-        break;
-      default: 
-        print('Invalid action specified for timer interaction');
-    }
-    // TODO
-  }
-
-  void _debug() {
-    print('States timers: ${this._state.timers.length}');
+      setState(() {});
   }
 
   Future<void> _startNewTimer() async {
@@ -75,6 +59,17 @@ class _HomePage extends State<HomePage> {
       this._state.addTimer(t);
       await this._db.createTimer(t);
     }
+  }
+
+  Future<void> _deleteTimer(int timerIndex) async {
+    var user = this._auth.currentUser;
+
+    if (user != null) {
+      TimeTracker removedTracker = this._state.removeTimer(timerIndex);
+      await this._db.deleteTimer(removedTracker);
+
+    }
+
   }
 
   @override
@@ -128,11 +123,10 @@ class _HomePage extends State<HomePage> {
                       ),
                     ),
                     key: Key(timer.uid),
-                    onDismissed: (direction) {
+                    onDismissed: (direction) async {
                       // remove from firebase
-                      setState(() {
-                        this._state.timers.removeAt(index);
-                      });
+                      await this._deleteTimer(index);
+                      setState(() {});
 
                       Scaffold.of(context).showSnackBar(
                         SnackBar(
