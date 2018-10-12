@@ -16,20 +16,22 @@ class TimerListItemComponentState extends State<TimerListItemComponent>
   with SingleTickerProviderStateMixin {
   AnimationController _controller;
   FirebaseDatabaseService _db;
-  Utility _util;
+  bool _isStopDisabled;
+  bool _isTogglePauseDisable;
 
   TimerListItemComponentState() {
     this._db = new FirebaseDatabaseService();
-    this._util = new Utility();
   }
 
   @override
   void initState() {
     super.initState();
 
+    _isStopDisabled = _isTogglePauseDisable = (widget._timer.currentState == TimerState.STOPPED);
+
     // create animation controller 
     _controller = new AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1200),
       vsync: this
     )
     ..addListener(() {
@@ -62,7 +64,7 @@ class TimerListItemComponentState extends State<TimerListItemComponent>
           ListTile(
             leading: Icon(
               Icons.access_time,
-              color: Color.lerp(Colors.pinkAccent, Colors.white30, _controller.value),
+              color: _timerIconColor(widget._timer)
             ),
             title: Text(Utility.formatTimerTitle(widget._timer)),
             subtitle: Text('Started ${Utility.formatDateTime(widget._timer.startTime)}'),
@@ -72,17 +74,15 @@ class TimerListItemComponentState extends State<TimerListItemComponent>
               children: <Widget>[
                 new FlatButton(
                   child: const Text('Stop Timer'),
-                  onPressed: () => _stopTimer(widget._timer)
+                  onPressed: _isStopDisabled 
+                              ? null 
+                              : () async =>  _stopTimer(widget._timer)
                 ),
                 new FlatButton(
                   child: Text(widget._timer.currentState == TimerState.PAUSED ? 'Resume Timer' : 'Pause Timer'),
-                  onPressed: () {
-                    if (widget._timer.currentState == TimerState.PAUSED) {
-                      _resumeTimer(widget._timer);
-                    } else {
-                      _pauseTimer(widget._timer);
-                    }
-                  }
+                  onPressed: _isTogglePauseDisable 
+                              ? null 
+                              : () async => _togglePause(widget._timer)
                 ) 
               ]
             )
@@ -90,6 +90,24 @@ class TimerListItemComponentState extends State<TimerListItemComponent>
         ],
       ),
     );
+  }
+
+  Future<void> _togglePause(TimeTracker t, {String desc = ''}) async {
+    if (t.currentState == TimerState.PAUSED) {
+      await _resumeTimer(t, desc: desc);
+    } else {
+      await _pauseTimer(t, desc: desc);
+    }
+  }
+
+  Color _timerIconColor(TimeTracker t) {
+    if (t.currentState == TimerState.NEVER_STARTED || t.currentState == TimerState.STOPPED) {
+      return Color.lerp(Colors.red[900], Colors.red[200], _controller.value);
+    } else if (t.currentState == TimerState.PAUSED) {
+      return Color.lerp(Colors.orange[700], Colors.orange[200], _controller.value);
+    } else {
+      return Color.lerp(Colors.green[700], Colors.green[200], _controller.value);
+    }
   }
 
   Future<void> _pauseTimer(TimeTracker timer, {String desc = ''}) async {
@@ -107,6 +125,7 @@ class TimerListItemComponentState extends State<TimerListItemComponent>
   Future<void> _stopTimer(TimeTracker timer, {String desc = ''}) async {
     timer.stop();
     await this._db.updateTimer(timer);
+    _isStopDisabled = _isTogglePauseDisable = true;
     setState(() {});
   }
 }

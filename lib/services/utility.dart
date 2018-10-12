@@ -9,8 +9,8 @@ class Utility {
     var monthString = Utility.intMonthToString(time.month);
     var hour = time.hour % 12;
     var meridiem = time.hour > 12 ? 'AM' : 'PM';
-    var minutes = time.minute;
-    
+    var minutes = (time.minute < 10) ? '0${time.minute}' : time.minute;
+
     return '$weekday $monthString $day, $hour:$minutes $meridiem';
   }
 
@@ -23,9 +23,10 @@ class Utility {
       case TimerState.STARTED:
       case TimerState.UNPAUSED:
         return 'Tracking';
-      case TimerState.STOPPED:
       case TimerState.NEVER_STARTED:
-        return 'Not Tracking';
+        return 'Not Started';
+      case TimerState.STOPPED:
+        return 'Stopped';
       case TimerState.PAUSED:
         return 'Paused';
       default: 

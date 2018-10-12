@@ -130,7 +130,9 @@ class _HomePage extends State<HomePage> {
 
                       Scaffold.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Timer ${timer.title} Removed')
+                          backgroundColor: Colors.grey[700],
+                          duration: const Duration(milliseconds: 2000),
+                          content: Text('Timer Removed', )
                         )
                       );
                     },
