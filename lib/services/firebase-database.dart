@@ -62,6 +62,22 @@ class FirebaseDatabaseService {
   Stream<QuerySnapshot> getUsersTimers(String uid) {
     return this._db.collection('timers').where('owner', isEqualTo: uid).snapshots();
   }
+
+  Stream<QuerySnapshot> getUsersActiveTimers(String uid) {
+    return this._db.collection('timers')
+      .where('owner', isEqualTo: uid)
+      .where('currentState', isEqualTo: 'STARTED')
+      .where('currentState', isEqualTo: 'PAUSED')
+      .where('currentState', isEqualTo: 'UNPAUSED')
+      .snapshots();
+  }
+
+    Stream<QuerySnapshot> getUsersInactiveTimers(String uid) {
+    return this._db.collection('timers')
+      .where('owner', isEqualTo: uid)
+      .where('currentState', isEqualTo: 'STOPPED')
+      .snapshots();
+  }
 }
 
 class StreamSubscriptionManager {

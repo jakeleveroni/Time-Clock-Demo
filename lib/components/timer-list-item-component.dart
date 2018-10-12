@@ -51,6 +51,7 @@ class TimerListItemComponentState extends State<TimerListItemComponent>
 
   @override
   void dispose() {
+    _controller.removeListener(() => print('removed listener'));
     _controller.dispose();
     super.dispose();
   }

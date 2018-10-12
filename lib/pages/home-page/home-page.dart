@@ -74,85 +74,123 @@ class _HomePage extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(
-          'LFMX Timer App', 
-          style: new TextStyle(
-            color: Colors.grey[850],
+    return new DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: new AppBar(
+          title: new Text(
+            'LFMX Timer App', 
+            style: new TextStyle(
+              color: Colors.grey[850],
+            ),
           ),
-        ),
-        actions: <Widget>[
-          PopupMenuButton(
-            onSelected: _select,
-            icon: Icon(
-              Icons.more_vert, 
-              color: Colors.grey[850]
-            ),
-            itemBuilder: (BuildContext context) {
-              return popoutMenuOpts.map((Choice c) {
-                return PopupMenuItem<Choice>(
-                    value: c,
-                    child: Text(c.title),
-                  );
-              }).toList();
-            })
-        ],
-      ),
-      body: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-          new Expanded(
-              child: new ListView.builder(
-                itemBuilder: (context, index) { 
-                  var timer = this._state.timers[index];
-                  return Dismissible(
-                    direction: DismissDirection.endToStart,
-                    background: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 25.0
-                      ),
-                      decoration: new BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: new BorderRadius.all(
-                          const Radius.circular(10.0)
-                        )
-                      ),
-                      child: Align(
-                        child: Text('Delete Timer')
-                      ),
-                    ),
-                    key: Key(timer.uid),
-                    onDismissed: (direction) async {
-                      // remove from firebase
-                      await this._deleteTimer(index);
-                      setState(() {});
-
-                      Scaffold.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.grey[700],
-                          duration: const Duration(milliseconds: 2000),
-                          content: Text('Timer Removed', )
-                        )
-                      );
-                    },
-                    child: TimerListItemComponent(timer),
-                  );
-                },
-                itemCount: this._state.timers.length,
-                padding: new EdgeInsets.symmetric(vertical: 45.0)
+          bottom: TabBar(
+            
+            tabs: <Widget>[
+              Tab(text: 'Active Timers'),
+              Tab(text: 'Finished Timers')
+            ],
+          ),
+          actions: <Widget>[
+            PopupMenuButton(
+              onSelected: _select,
+              icon: Icon(
+                Icons.more_vert, 
+                color: Colors.grey[850]
               ),
-            ),
+              itemBuilder: (BuildContext context) {
+                return popoutMenuOpts.map((Choice c) {
+                  return PopupMenuItem<Choice>(
+                      value: c,
+                      child: Text(c.title),
+                    );
+                }).toList();
+              })
           ],
+        ),
+        body: TabBarView(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+              Expanded(
+                  child: ListView.builder(
+                    itemBuilder: (context, index) => _buildTimerList(true, context, index),
+                    itemCount: this._state.getActiveTimers().length,
+                    padding: new EdgeInsets.symmetric(vertical: 45.0)
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+              Expanded(
+                  child: ListView.builder(
+                    itemBuilder: (context, index) => _buildTimerList(false, context, index),
+                    itemCount: this._state.getStoppedTimers().length,
+                    padding: new EdgeInsets.symmetric(vertical: 45.0)
+                  ),
+                ),
+              ],
+            )
+          ]
+        ),
+        floatingActionButton: new FloatingActionButton(
+          onPressed: _startNewTimer,
+          foregroundColor: Colors.grey[850],
+          tooltip: 'Start New Timer',
+          child: new Icon(Icons.alarm_add),
+        ), 
+      )
+    ); 
+  }
+
+  Dismissible _buildTimerList(bool activeTimers, BuildContext ctx, int index) {
+    List<TimeTracker> filteredTimers = (activeTimers) 
+      ? this._state.getActiveTimers()
+      : this._state.getStoppedTimers();
+
+    if (filteredTimers.length == 0) {
+      return null;
+    }
+
+    var timer = filteredTimers[index];
+
+    return Dismissible(
+      direction: DismissDirection.endToStart,
+      background: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: 25.0
+        ),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.all(
+            const Radius.circular(10.0)
+          )
+        ),
+        child: Align(
+          child: Text('Delete Timer')
+        ),
       ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: _startNewTimer,
-        foregroundColor: Colors.grey[850],
-        tooltip: 'Start New Timer',
-        child: new Icon(Icons.alarm_add),
-      ), 
+      key: Key(timer.uid),
+      onDismissed: (direction) async {
+        // remove from firebase
+        await this._deleteTimer(index);
+        setState(() {});
+
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.grey[700],
+            duration: const Duration(milliseconds: 2000),
+            content: Text('Timer Removed', )
+          )
+        );
+      },
+      child: TimerListItemComponent(timer),
     );
   }
+  
 }
 
 // Helper Classes

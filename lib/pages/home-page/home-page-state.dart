@@ -16,19 +16,14 @@ class HomePageState {
     this.timers.add(t);
   }
 
-  TimeTracker removeTimer(int timerIndex) {
-    return this.timers.removeAt(timerIndex);
-  }
+  TimeTracker removeTimer(int timerIndex) => this.timers.removeAt(timerIndex);
 
-  List<TimeTracker> getActiveTimers() {
-    return this.timers.where((TimeTracker t) => t.currentState == TimerState.STARTED);
-  }
+  List<TimeTracker> getActiveTimers() => 
+    this.timers.where((TimeTracker t) => t.currentState != TimerState.STOPPED).toList();
 
-  List<TimeTracker> getPausedTimers() {
-    return this.timers.where((TimeTracker t) => t.currentState == TimerState.PAUSED);
-  }
+  List<TimeTracker> getPausedTimers() => 
+    this.timers.where((TimeTracker t) => t.currentState == TimerState.PAUSED).toList();
 
-  List<TimeTracker> getStoppedTimers() {
-    return this.timers.where((TimeTracker t) => t.currentState == TimerState.STOPPED);
-  }
+  List<TimeTracker> getStoppedTimers() => 
+    this.timers.where((TimeTracker t) => t.currentState == TimerState.STOPPED).toList();
 }
