@@ -51,9 +51,7 @@ class FirebaseDatabaseService {
 
     if (q.documents.length == 1) {
       return await this._db.runTransaction((Transaction t) async {
-        await this._db.document('timers/${q.documents[0].documentID}').updateData({
-          'timerLogs': timer.timerLogs.map((TimerLog x) => x.toDocument()).toList()
-        });
+        await this._db.document('timers/${q.documents[0].documentID}').updateData(timer.toDocument());
       });
     } else {
       print('Either too many or not enough documents referenced for update: ${q.documents.length}');
