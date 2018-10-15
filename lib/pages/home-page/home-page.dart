@@ -9,13 +9,10 @@ import '../../services/authentication-service.dart';
 import '../../services/firebase-database.dart';
 
 class HomePage extends StatefulWidget {
-  AuthenticationService _auth;
+  final AuthenticationService _auth = new AuthenticationService();
   final String title;
 
-  HomePage({Key key, this.title}) : super(key: key) {
-    this._auth = new AuthenticationService();
-  }
-
+  HomePage({Key key, this.title}) : super(key: key);
 
   @override
   _HomePage createState() => new _HomePage(_auth);
@@ -61,15 +58,13 @@ class _HomePage extends State<HomePage> {
     }
   }
 
-  Future<void> _deleteTimer(int timerIndex) async {
-    var user = this._auth.currentUser;
-
-    if (user != null) {
+  Future<dynamic> _deleteTimer(int timerIndex) async {
+    if (this._auth.currentUser != null) {
       TimeTracker removedTracker = this._state.removeTimer(timerIndex);
-      await this._db.deleteTimer(removedTracker);
-
-    }
-
+      return await this._db.deleteTimer(removedTracker);
+    } else {
+      return false;
+     }  
   }
 
   @override
@@ -85,7 +80,6 @@ class _HomePage extends State<HomePage> {
             ),
           ),
           bottom: TabBar(
-            
             tabs: <Widget>[
               Tab(text: 'Active Timers'),
               Tab(text: 'Finished Timers')
@@ -146,7 +140,7 @@ class _HomePage extends State<HomePage> {
     ); 
   }
 
-  Dismissible _buildTimerList(bool activeTimers, BuildContext ctx, int index) {
+  Dismissible _buildTimerList(bool activeTimers, BuildContext context, int index) {
     List<TimeTracker> filteredTimers = (activeTimers) 
       ? this._state.getActiveTimers()
       : this._state.getStoppedTimers();

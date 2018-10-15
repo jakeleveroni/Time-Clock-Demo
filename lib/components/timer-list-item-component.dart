@@ -114,19 +114,25 @@ class TimerListItemComponentState extends State<TimerListItemComponent>
   Future<void> _pauseTimer(TimeTracker timer, {String desc = ''}) async {
     timer.pause();
     await this._db.updateTimer(timer);
-    setState(() {});
+    this._safeSetState();
   }
 
   Future<void> _resumeTimer(TimeTracker timer, {String desc = ''}) async {
     timer.unpause();
     await this._db.updateTimer(timer);
-    setState(() {});
+    this._safeSetState();
   }
 
   Future<void> _stopTimer(TimeTracker timer, {String desc = ''}) async {
     timer.stop();
     await this._db.updateTimer(timer);
     _isStopDisabled = _isTogglePauseDisable = true;
-    setState(() {});
+    this._safeSetState();
+  }
+
+  void _safeSetState() {
+    if (this.mounted) {
+      setState(() {});
+    }
   }
 }
