@@ -4,6 +4,7 @@ import 'dart:async';
 import '../models/timer.dart';
 import '../services/utility.dart';
 import '../services/firebase-database.dart';
+import '../pages/timer-detail/timer-detail-page.dart';
 
 class TimerListItemComponent extends StatefulWidget {
   final TimeTracker _timer;
@@ -84,7 +85,11 @@ class TimerListItemComponentState extends State<TimerListItemComponent>
                   onPressed: _isTogglePauseDisable 
                               ? null 
                               : () async => _togglePause(widget._timer)
-                ) 
+                ),
+                new FlatButton(
+                  child: Text('Edit Timer'),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TimerDetailPage(widget._timer.uid)))
+                ), 
               ]
             )
           )

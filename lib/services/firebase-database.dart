@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/dtos/user-dto.dart';
@@ -8,7 +7,6 @@ import '../models/timer.dart';
 class FirebaseDatabaseService {
   static final FirebaseDatabaseService _singleton = new FirebaseDatabaseService._internal();
   Firestore _db;
-  StreamSubscriptionManager _streamManager;
   
   factory FirebaseDatabaseService() {
     return _singleton;
@@ -16,7 +14,6 @@ class FirebaseDatabaseService {
 
   FirebaseDatabaseService._internal() {
     this._db = Firestore.instance;
-    this._streamManager = new StreamSubscriptionManager();
   }
 
   Future<dynamic> createUser(UserDto user) async {
@@ -78,22 +75,8 @@ class FirebaseDatabaseService {
       .where('currentState', isEqualTo: 'STOPPED')
       .snapshots();
   }
-}
 
-class StreamSubscriptionManager {
-  static final Map<String, StreamSubscription<dynamic>> _streams = new Map<String, StreamSubscription<dynamic>>();
-
-  void addStream(StreamSubscription<dynamic> streamSub, {String key}) {
-    if (key == null) {
-      key = new Uuid().v4();
-    }
-
-    if (!StreamSubscriptionManager._streams.containsKey(key)) {
-      StreamSubscriptionManager._streams[key] = streamSub;
-    }
-  }
-  
-  void stopStream(String key) {
-    StreamSubscriptionManager._streams.remove(key).cancel();
+  Future<QuerySnapshot> getTimerById(String timerId) {
+    return this._db.collection('timers').where('uid', isEqualTo: timerId).snapshots().first;
   }
 }

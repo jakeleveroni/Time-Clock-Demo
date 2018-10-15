@@ -23,6 +23,8 @@ class TimeTracker {
     }
   }
 
+  TimeTracker.empty();
+
   TimeTracker.fromDocument(DocumentSnapshot snapshot) {
     this.uid = snapshot['uid'];
     this.title = snapshot['title'];
