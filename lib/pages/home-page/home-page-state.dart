@@ -1,22 +1,29 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../models/timer.dart';
 
 class HomePageState {
   bool timerActive;
-  List<Timer> timers;
+  Stream<QuerySnapshot> timerStream;
+  List<TimeTracker> timers;
 
-  void addTimer({bool startOnCreate = true}) {
-    this.timers.add(new Timer(true));
+  HomePageState() {
+    this.timers = new List<TimeTracker>();
   }
 
-  List<Timer> getActiveTimers() {
-    return this.timers.where((Timer t) => t.currentState == TimerState.STARTED);
+  void addTimer(TimeTracker t) {
+    this.timers.add(t);
   }
 
-  List<Timer> getPausedTimers() {
-    return this.timers.where((Timer t) => t.currentState == TimerState.PAUSED);
-  }
+  TimeTracker removeTimer(int timerIndex) => this.timers.removeAt(timerIndex);
 
-  List<Timer> getStoppedTimers() {
-    return this.timers.where((Timer t) => t.currentState == TimerState.STOPPED);
-  }
+  List<TimeTracker> getActiveTimers() => 
+    this.timers.where((TimeTracker t) => t.currentState != TimerState.STOPPED).toList();
+
+  List<TimeTracker> getPausedTimers() => 
+    this.timers.where((TimeTracker t) => t.currentState == TimerState.PAUSED).toList();
+
+  List<TimeTracker> getStoppedTimers() => 
+    this.timers.where((TimeTracker t) => t.currentState == TimerState.STOPPED).toList();
 }

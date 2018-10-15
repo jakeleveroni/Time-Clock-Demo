@@ -31,7 +31,8 @@ class AuthenticationService {
       print('User is null');
       return null;
     } else {
-      return new UserDto(this._user.displayName, this._user.email, this._user.uid);
+      this.currentUser = new UserDto(this._user.displayName, this._user.email, this._user.uid);
+      return this.currentUser;
     }
   }
 

@@ -1,11 +1,11 @@
 import 'package:uuid/uuid.dart';
 
 class MessageThread {
-  Uuid uid;
+  String uid;
   List<String> messages;
 
   MessageThread(this.messages) {
-    uid = new Uuid();
+    uid = new Uuid().v4();
   }
 
   Map<String, dynamic> toDocument() {
