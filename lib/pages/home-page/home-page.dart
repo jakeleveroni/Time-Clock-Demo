@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../login-page.dart';
+import '../account-page/account-page.dart';
 import '../../models/timer.dart';
 import './home-page-state.dart';
 import '../../components/timer-list-item-component.dart';
@@ -43,6 +44,8 @@ class _HomePage extends State<HomePage> {
       if (_selectedChoice.title == 'Logout') {
         await this._auth.logout();
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+      } else if (_selectedChoice.title == 'My Profile') {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => AccountPage()));
       }
 
       setState(() {});

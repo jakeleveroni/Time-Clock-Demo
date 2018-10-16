@@ -23,6 +23,10 @@ class FirebaseDatabaseService {
     });
   }
 
+  Future<QuerySnapshot> getUser(String userId) async {
+    return await this._db.collection('users').where('uid', isEqualTo: userId).snapshots().first;
+  }
+
   Future<dynamic> createTimer(TimeTracker t) async {
     return await this._db.runTransaction((Transaction trans) async {
       CollectionReference timersRef = this._db.collection('timers');
@@ -78,5 +82,18 @@ class FirebaseDatabaseService {
 
   Future<QuerySnapshot> getTimerById(String timerId) {
     return this._db.collection('timers').where('uid', isEqualTo: timerId).snapshots().first;
+  }
+
+  Future<dynamic> updateUser(UserDto user) async {
+    QuerySnapshot q = await this._db.collection('users').where('uid', isEqualTo: user.uid).snapshots().first;
+
+    if (q.documents.length == 1) {
+      return await this._db.runTransaction((Transaction t) async {
+        await this._db.document('users/${q.documents[0].documentID}').updateData(user.toDocument());
+      });
+    } else {
+      print('Either too many or not enough documents referenced for update: ${q.documents.length}');
+      return null;
+    }
   }
 }
