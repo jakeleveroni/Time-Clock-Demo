@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'firebase-database.dart';
 import '../models/dtos/user-dto.dart';
@@ -24,15 +25,18 @@ class AuthenticationService {
     return (this.currentUser != null);
   }
 
-  Future<UserDto> login(String email, String pass) async {
+  Future<dynamic> login(String email, String pass) async {
     this._user = await this._auth.signInWithEmailAndPassword(email: email, password: pass);
     
     if (this._user == null) {
       print('User is null');
-      return null;
+      return false;
     } else {
-      this.currentUser = new UserDto(this._user.displayName, this._user.email, this._user.uid);
-      return this.currentUser;
+      return await this._db.getUser(this._user.uid).then((QuerySnapshot userSnap) {
+        if (userSnap.documents.length == 1) {
+          this.currentUser = UserDto.fromDocument(userSnap.documents[0]);
+        }
+      });
     }
   }
 
@@ -42,7 +46,9 @@ class AuthenticationService {
       print('Error could not create user');
       return false;
     } else {  
-      await this._db.createUser(new UserDto(user.displayName, user.email, user.uid));
+      var newUser = new UserDto(user.displayName, user.email, user.uid, phone: user.phoneNumber, imageUrl: user.photoUrl);
+      await this._db.createUser(newUser);
+      this.currentUser = newUser;
       return true;
     }
   }
