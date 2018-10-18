@@ -17,7 +17,7 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   FirebaseDatabaseService _db;
-
+  final GlobalKey _formKey = GlobalKey<FormState>();
   _AccountPageState() {
     this._db = FirebaseDatabaseService();
   }
@@ -46,51 +46,59 @@ class _AccountPageState extends State<AccountPage> {
         )],
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          this._buildUserImage(),
-          new ListTile(
-            leading: const Icon(Icons.people),
-            title: new TextFormField(
-              decoration: new InputDecoration(hintText: "Username"),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter a user name';
-                } else {
-                  widget._state.userName = value;
-                }
-              }
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            this._buildUserImage(),
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new ListTile(
+                    leading: const Icon(Icons.people),
+                    title: new TextFormField(
+                      decoration: new InputDecoration(hintText: "Username"),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter a user name';
+                        } else {
+                          widget._state.userName = value;
+                        }
+                      }
+                    ),
+                  ),
+                  new ListTile(
+                    leading: const Icon(Icons.email),
+                    title: new TextFormField(
+                      decoration: new InputDecoration(hintText: "Email"),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter an email';
+                        } else {
+                          widget._state.email = value;
+                        }
+                      }
+                    ),
+                  ),
+                  new ListTile(
+                    leading: const Icon(Icons.email),
+                    title: new TextFormField(
+                      keyboardType: TextInputType.numberWithOptions(),
+                      decoration: new InputDecoration(hintText: "Phone Number"),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter an email';
+                        } else {
+                          widget._state.phoneNumber = value;
+                        }
+                      }
+                    ),
+                  ),
+                ],  
+              )
             ),
-          ),
-          new ListTile(
-            leading: const Icon(Icons.email),
-            title: new TextFormField(
-              decoration: new InputDecoration(hintText: "Email"),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter an email';
-                } else {
-                  widget._state.email = value;
-                }
-              }
-            ),
-          ),
-          new ListTile(
-            leading: const Icon(Icons.email),
-            title: new TextFormField(
-              keyboardType: TextInputType.numberWithOptions(),
-              decoration: new InputDecoration(hintText: "Phone Number"),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter an email';
-                } else {
-                  widget._state.phoneNumber = value;
-                }
-              }
-            ),
-          ),
-        ],
-      ),
+          ],
+        )
     );
   }
 
