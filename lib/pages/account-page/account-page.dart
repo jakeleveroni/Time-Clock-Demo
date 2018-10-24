@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'account-page-state.dart';
@@ -17,7 +18,7 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   FirebaseDatabaseService _db;
-  final GlobalKey _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   _AccountPageState() {
     this._db = FirebaseDatabaseService();
   }
@@ -26,21 +27,13 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-        title: new Text('Edit Timer'),
+        title: new Text('My Account'),
         actions: <Widget>[
           Builder(
             builder: (BuildContext context) {
             return IconButton(
               icon: const Icon(Icons.save),
-              onPressed: () async {
-                await this._db.updateUser(widget._state.user);
-                Scaffold.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('User Information Updated'),
-                    duration: Duration(milliseconds: 2000),
-                  )
-                );
-              }
+              onPressed: () => this._updateUser()
             );
           }
         )],
@@ -49,6 +42,7 @@ class _AccountPageState extends State<AccountPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             this._buildUserImage(),
+            this._buildUserInfoDisplay(),
             Form(
               key: _formKey,
               child: Column(
@@ -62,7 +56,7 @@ class _AccountPageState extends State<AccountPage> {
                         if (value.isEmpty) {
                           return 'Please enter a user name';
                         } else {
-                          widget._state.userName = value;
+                          widget._state.user.userName = value;
                         }
                       }
                     ),
@@ -71,17 +65,17 @@ class _AccountPageState extends State<AccountPage> {
                     leading: const Icon(Icons.email),
                     title: new TextFormField(
                       decoration: new InputDecoration(hintText: "Email"),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter an email';
-                        } else {
-                          widget._state.email = value;
-                        }
-                      }
+                      // validator: (value) {
+                      //   if (value.isEmpty) {
+                      //     return 'Please enter an email';
+                      //   } else {
+                      //     widget._state.user.email = value;
+                      //   }
+                      // }
                     ),
                   ),
                   new ListTile(
-                    leading: const Icon(Icons.email),
+                    leading: const Icon(Icons.phone),
                     title: new TextFormField(
                       keyboardType: TextInputType.numberWithOptions(),
                       decoration: new InputDecoration(hintText: "Phone Number"),
@@ -89,7 +83,7 @@ class _AccountPageState extends State<AccountPage> {
                         if (value.isEmpty) {
                           return 'Please enter an email';
                         } else {
-                          widget._state.phoneNumber = value;
+                          widget._state.user.phoneNumber = value;
                         }
                       }
                     ),
@@ -99,6 +93,49 @@ class _AccountPageState extends State<AccountPage> {
             ),
           ],
         )
+    );
+  }
+
+  Future<void> _updateUser() async {
+    if (this._formKey.currentState.validate()) {
+      var res = await this._db.updateUser(widget._state.user);
+
+      if (res != null) {
+        print(res);
+      }
+      return;
+    }
+  }
+
+  Widget _buildUserInfoDisplay() {
+    var user = this.widget._state.user;
+    var widgets = new List<Widget>();
+
+    var userInfoStyle = TextStyle(
+      color: Colors.grey[600],
+      fontSize: 15.0,
+    );
+
+    if (user.userName != null && user.userName.isNotEmpty) {
+      widgets.add(Text(user.userName, style: userInfoStyle));
+    }
+
+    if (user.email != null && user.email.isNotEmpty) {
+      widgets.add(Text(user.email, style: userInfoStyle));
+    }
+
+    if (user.phoneNumber != null && user.phoneNumber.isNotEmpty) {
+      widgets.add(Text(user.phoneNumber, style: userInfoStyle));
+    }
+
+    return Container(
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: widgets.toList(),
+        )
+      )
     );
   }
 
